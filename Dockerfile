@@ -44,6 +44,7 @@ RUN apt-get update \
 	&& echo oracle-java9-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections \
 	&& apt-get -y install oracle-java9-installer \
 	&& apt-get -y remove software-properties-common \
+	&& apt-get autoremove -y \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Setup the JAVA_HOME
