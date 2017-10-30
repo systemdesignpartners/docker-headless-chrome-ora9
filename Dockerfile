@@ -38,28 +38,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Add Java 9
 #
 RUN apt-get update && \
-# Here we need the "-o Dpkg" stuff because of a bug in openjdk-9-jdk for xenial (b114)
-# There is a duplicate file, so we force-overwrite it
-		apt-get -o Dpkg::Options::="--force-overwrite" install -y --no-install-recommends openjdk-9-jdk \
+	&& apt-get -y install software-properties-common \
+	&& add-apt-repository ppa:webupd8team/java \
+	&& apt-get update \
+	&& echo oracle-java9-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections \
+	&& apt-get -y install oracle-java9-installer \
+	&& apt-get -y remove software-properties-common \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Setup the JAVA_HOME
 
-# Step 1
-# add a simple script that can auto-detect the appropriate JAVA_HOME value
-# based on whether the JDK or only the JRE is installed
-RUN { \
-		echo '#!/bin/sh'; \
-		echo 'set -e'; \
-		echo; \
-		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
-	} > /usr/local/bin/docker-java-home \
-	&& chmod +x /usr/local/bin/docker-java-home
-
-# Step 2
-# do some fancy footwork to create a JAVA_HOME that's cross-architecture-safe
-RUN ln -svT "/usr/lib/jvm/java-9-openjdk-$(dpkg --print-architecture)" /docker-java-home
-ENV JAVA_HOME /docker-java-home
+ENV JAVA_HOME /usr/lib/jvm/java-9-oracle
 
 
 #
