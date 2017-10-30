@@ -85,7 +85,7 @@ ARG BASE_URL=https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/bina
 # Maven fails with 'Can't read cryptographic policy directory: unlimited'
 # because it looks for $JAVA_HOME/conf/security/policy/unlimited but it is in
 # /etc/java-9-openjdk/security/policy/unlimited
-RUN ln -s /etc/java-9-openjdk /usr/lib/jvm/java-9-openjdk-$(dpkg --print-architecture)/conf
+##RUN ln -s /etc/java-9-openjdk /usr/lib/jvm/java-9-openjdk-$(dpkg --print-architecture)/conf
 
 RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
   && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
