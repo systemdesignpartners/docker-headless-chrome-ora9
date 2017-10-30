@@ -1,0 +1,44 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Pre Build Phase started on `date`
+      - echo
+      - echo Nothing to do in Pre Build...
+  build:
+    commands:
+      - echo
+      - echo Build Phase started on `date`
+      - echo
+      - echo Building the Docker image...          
+      - docker build -t $IMAGE_REPO_NAME .
+      - echo
+      - echo Build Phase ended on `date`
+  post_build:
+    commands:
+      - echo
+      - echo Post Build Phase started on `date`
+      - echo
+      - echo Logging in to Amazon ECS...
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION)
+      - echo
+      - echo Docker Tagging for AWS ECS...
+      - docker tag $IMAGE_REPO_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_PREFERRED_TAG      
+      - echo
+      - echo Pushing the Docker image to AWS ECS...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_PREFERRED_TAG
+# Docker push is now handled as an Automated Build from GitHub because that is the way to get a Dockerfile posted in the repo.
+# Docker Automated Build does not support CodeConnect or CodeBuild directly. Anyway, we would not want to push to Docker except
+# on very specific occasions.
+#      - echo
+#      - echo Logging in to Docker Hub...
+#      - docker login --username="systemdesignpartners" --password="Maurice#2"
+#      - echo
+#      - echo Docker Tagging for Docker Hub...
+#      - docker tag $IMAGE_REPO_NAME:latest systemdesignpartners/$IMAGE_DOCKER_NAME:$IMAGE_DOCKER_TAG
+#      - echo
+#      - echo Pushing the Docker image to Docker Hub...
+#      - docker push systemdesignpartners/$IMAGE_DOCKER_NAME:$IMAGE_DOCKER_TAG
+      - echo
+      - echo Post Build Phase ended on `date`
