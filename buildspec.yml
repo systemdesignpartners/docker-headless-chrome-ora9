@@ -1,5 +1,10 @@
 version: 0.2
 
+#
+# DO NOT POST THIS FILE TO GITHUB OR DOCKER !!!!
+# It is meant for AWS CodeBuild only
+#
+
 phases:
   pre_build:
     commands:
